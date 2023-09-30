@@ -9,6 +9,8 @@ class SaleOrder(models.Model):
     _name = 'sale.order'
     _inherit = 'sale.order'
 
+    shop_id = fields.Many2one('sale.shop', string="Shop", default=lambda self: self.env['sale.shop'].search([], limit=1))
+
     @api.multi
     def update_warehouse_and_location(self):
         # if SaleOrder is not paid

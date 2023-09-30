@@ -19,19 +19,18 @@
 
     <record model="ir.rule" id="restrict_warehouses">
         <field name="name">Restrict Warehouses</field>
-        <field name="model_id" ref="stock.model_stock_warehouse" />
+        <field name="model_id" ref="stock.warehouse0" />
         <field name="domain_force">[('id', 'in', [w.id for w in user.x_warehouse])]</field>
         <field name="groups" eval="[(4, ref('group_facility_users'))]" />
 
     </record>
 
-    <!-- <record model="ir.rule" id="restrict_warehouses">
-        <field name="name">Restrict Warehouses</field>
-        <field name="model_id" ref="product.pricelist" />
-        <field name="domain_force">[('id', 'in', [w.id for w in user.x_warehouse])]</field>
+    <record model="ir.rule" id="restrict_pricelists">
+        <field name="name">Restrict Pricelist</field>
+        <field name="model_id" ref="product.list0" />
+        <field name="domain_force">[('warehouse.id', 'in', [w.id for w in user.x_warehouse])]</field>
         <field name="groups" eval="[(4, ref('group_facility_users'))]" />
-
-    </record> -->
+    </record>
 
     <!-- <record model="ir.rule" id="restrict_warehouses_picking">
         <field name="name">Restrict Stock Pickings</field>
@@ -42,7 +41,7 @@
     </record> -->
 
     <!-- <record model="ir.rule" id="restrict_warehouses_products">
-        <field name="name">Restrict Products</field>
+        <field name="name">Restrict Pricelists</field>
         <field name="model_id" ref="product.model_product_template" />
         <field name="domain_force">[('vendor', 'in', [w.id for w in user.x_warehouse])]</field>
         <field name="groups" eval="[(4, ref('group_facility_users'))]" />
