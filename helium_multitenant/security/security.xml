@@ -49,6 +49,15 @@
 
     </record> -->
 
+
+    <!-- <record model="ir.rule" id="restrict_warehouses_products">
+        <field name="name">Restrict Sale Orders</field>
+        <field name="model_id" ref="sale.order" />
+        <field name="domain_force">[('vendor', 'in', [w.id for w in user.x_warehouse])]</field>
+        <field name="groups" eval="[(4, ref('group_facility_users'))]" />
+
+    </record> -->
+
     <!-- <record model="ir.rule" id="restrict_customers">
         <field name="name">Restrict Partners</field>
         <field name="model_id" ref="base.model_res_partner" />
