@@ -6,8 +6,8 @@ import datetime
 
 class TenantUser(models.Model):
 
-    _name = 'sale.order'
-    _inherit = 'sale.order'
+    _name = 'res.users'
+    _inherit = 'res.users'
 
     x_warehouse = fields.Many2many("stock.warehouse")
 

@@ -7,11 +7,8 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form" />
             <field name="arch" type="xml">
-                <field name="partner_id" position="after">
-                    <field name="ccc_number" />
-                </field>
                 <xpath expr="//header/button[1]" position="after">
-                    <button name="update_warehouse_and_location" string="Amend" type="object"
+                    <button name="update_warehouse_and_location" string="Process Quotation" type="object"
                         class="oe_highlight" />
                 </xpath>
             </field>

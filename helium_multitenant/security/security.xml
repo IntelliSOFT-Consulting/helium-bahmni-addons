@@ -25,6 +25,14 @@
 
     </record>
 
+    <!-- <record model="ir.rule" id="restrict_warehouses">
+        <field name="name">Restrict Warehouses</field>
+        <field name="model_id" ref="product.pricelist" />
+        <field name="domain_force">[('id', 'in', [w.id for w in user.x_warehouse])]</field>
+        <field name="groups" eval="[(4, ref('group_facility_users'))]" />
+
+    </record> -->
+
     <!-- <record model="ir.rule" id="restrict_warehouses_picking">
         <field name="name">Restrict Stock Pickings</field>
         <field name="model_id" ref="stock.model_stock_picking_type" />
@@ -41,12 +49,12 @@
 
     </record> -->
 
-    <record model="ir.rule" id="restrict_customers">
+    <!-- <record model="ir.rule" id="restrict_customers">
         <field name="name">Restrict Partners</field>
         <field name="model_id" ref="base.model_res_partner" />
         <field name="domain_force">[(user.id, 'in', 'user_ids')]</field>
         <field name="groups" eval="[(4, ref('group_facility_users'))]" />
-    </record>
+    </record> -->
 
 
 </odoo>
