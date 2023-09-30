@@ -10,7 +10,7 @@
 				<field name="partner_village"/>
 				<field name="care_setting" />
 				<field name="provider_name"/>
-				<field name="ccc_number"/>
+				<!-- <field name="ccc_number"/> -->
 			</xpath>
 			<xpath expr="//field[@name='partner_id']" position="after">
 				<field name="partner_uuid" invisible="1"/>
