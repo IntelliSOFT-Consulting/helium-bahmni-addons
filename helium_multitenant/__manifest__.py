@@ -22,7 +22,8 @@
         'views/pricelist.xml',
         'views/sale_order.xml',
         'views/warehouse.xml',
-        'security/security.xml'
+        'security/security.xml',
+        'views/user.xml',
     ],
     # only loaded in demonstration mode
     # 'demo': [

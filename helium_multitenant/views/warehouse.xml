@@ -5,44 +5,18 @@
         <record id="stock_warehouse_form" model="ir.ui.view">
             <field name="name">stock.warehouse.form</field>
             <field name="model">stock.warehouse</field>
-            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="inherit_id" ref="stock.view_warehouse" />
             <field name="arch" type="xml">
-                <xpath expr="//header/button[1]" position="after">
-                    <button name="charge_wallet" string="Pay with wallet" type="object"
-                        class="oe_highlight" />
-                </xpath>
-                <xpath expr="//page[1]" position="after">
-                    <page string="Payment Breakdown">
-                        <field name="payment_breakdown" widget="one2many_list" mode="tree">
-                            <tree>
-                                <field name="payment_type" />
-                                <field name="amount" />
-                            </tree>
-                        </field>
-                    </page>
-                </xpath>
-            </field>
-        </record>
-
-        <record id="action_my_model_form" model="ir.actions.act_window">
-            <field name="name">Sale Order Form</field>
-            <field name="res_model">sale.order</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="payment_type_form_sale_quotation" />
-            <field name="context">{'onload_method': 'amend_sale_order'}</field>
-        </record>
-
-
-        <record id="payment_type_tree_sale_quotation" model="ir.ui.view">
-            <field name="name">sale.order.tree</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_quotation_tree" />
-
-            <field name="arch" type="xml">
-                <field name="amount_total" position="after">
-                    <field name="ccc_number" />
+                <field name="partner_id" position="after">
+                    <field name="pricelist" />
+    
                 </field>
+                
             </field>
         </record>
+
+      
+
+
     </data>
 </odoo>
