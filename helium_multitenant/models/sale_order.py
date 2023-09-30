@@ -33,6 +33,7 @@ class SaleOrder(models.Model):
                 UserError("Facility information not found.")
                 return
             self.warehouse_id = warehouse[0]
+            self.location_id = self.warehouse_id.lot_stock_id
             self.pricelist_id = self.warehouse_id.pricelist
 
 
