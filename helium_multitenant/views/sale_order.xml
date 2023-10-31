@@ -12,10 +12,9 @@
                         class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/> 
                 </xpath>
 
-                <!-- <field name="location_id" position="after">
-                    <field name="warehouse_id" />
-    
-                </field> -->
+                <field name="currency_id" position="after">
+                    <field name="location_id" />
+                </field>
             </field>
         </record>
 

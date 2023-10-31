@@ -10,6 +10,24 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     shop_id = fields.Many2one('sale.shop', string="Shop", default=lambda self: self.env['sale.shop'].search([], limit=1))
+    location_id  = fields.Many2one('stock.location', string="Location", default=lambda self: self.env['stock.location'].search([
+        ('warehouse_id', '=', get_warehouse())
+    ], limit=1))
+
+    def get_warehouse(self):
+        data = {}
+        for attribute in self.customer.attribute_ids:
+            data[attribute.name] = attribute.value
+        console_log(data)
+        if 'facilityName' in data:
+            warehouse = self.env['stock.warehouse'].search(
+                    [("name", "=", data['facilityName'])], limit=1)
+            if not warehouse:
+                UserError("Facility information not found.")
+                return None
+            return warehouse[0]
+        return None
+
 
     @api.onchange('customer')
     def _onchange_customer(self):
@@ -28,7 +46,7 @@ class SaleOrder(models.Model):
                     UserError("Facility information not found.")
                     return
                 self.warehouse_id = warehouse[0]
-                self.location_id = self.warehouse_id.lot_stock_id
+                # self.location_id = self.loc
                 self.pricelist_id = self.warehouse_id.pricelist
             return
 
