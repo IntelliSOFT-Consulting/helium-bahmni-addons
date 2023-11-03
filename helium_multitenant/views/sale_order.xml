@@ -12,8 +12,9 @@
                         class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/> 
                 </xpath>
 
-                <field name="currency_id" position="after">
-                    <field name="location_id" />
+                <field name="payment_term_id" position="after">
+                    <field name="facility" readonly="0" options="{'no_create': True}" />
+                    <field name="stock_location"  options="{'no_create': True}" />
                 </field>
             </field>
         </record>
