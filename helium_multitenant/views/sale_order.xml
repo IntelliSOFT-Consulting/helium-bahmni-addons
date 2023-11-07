@@ -14,7 +14,7 @@
 
                 <field name="payment_term_id" position="after">
                     <field name="facility" readonly="0" options="{'no_create': True}" />
-                    <field name="stock_location"  options="{'no_create': True}" />
+                    <field name="stock_location" domain='[(stock_location.name, "ilike", facility.name)]'  options="{'no_create': True}" />
                 </field>
             </field>
         </record>
