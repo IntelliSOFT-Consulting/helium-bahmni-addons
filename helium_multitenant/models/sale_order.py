@@ -59,17 +59,24 @@ class SaleOrder(models.Model):
                 warehouse = self.env['stock.warehouse'].search(
                     [("name", "=", data['facilityName'])], limit=1)
                 if not warehouse:
-                    UserError("Facility information not found.")
+                    UserError("Selected facility information not found or invalid.")
                     return
                 self.warehouse_id = warehouse[0]
-                self.location_id = self.stock_location
                 self.facility = self.warehouse_id
                 self.pricelist_id = self.warehouse_id.pricelist
+                self.write({
+                    "warehouse_id":warehouse[0],
+                    "pricelist_id": self.warehouse_id.pricelist,
+                    "facility":self.warehouse_id
+                })
             return
 
     @api.model
     def update_warehouse_and_location(self):
         # if SaleOrder is not paid
+        if not self.facility:
+            UserError("Dispensing location is required.")
+            return
         console_log("State: {}".format(self.state))
         if self.state == "draft":
             data = {}
