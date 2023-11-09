@@ -24,6 +24,7 @@ class SaleOrder(models.Model):
                     UserError("Facility information not found.")
                     return
                 self.warehouse_id = warehouse[0]
+
                 self.location_id = self.stock_location
                 self.facility = self.warehouse_id
                 self.write({'facility': self.facility})
@@ -46,6 +47,8 @@ class SaleOrder(models.Model):
     def _onchange_facility(self):
         if self.facility:
             self.warehouse_id = self.facility
+            self.pricelist_id = self.warehouse_id.pricelist[0]
+            self.facility_name = self.warehouse_id.name
             return
 
     @api.onchange('partner_id')
@@ -62,13 +65,12 @@ class SaleOrder(models.Model):
                     UserError("Selected facility information not found or invalid.")
                     return
                 self.warehouse_id = warehouse[0]
-                self.facility = self.warehouse_id
-                self.pricelist_id = self.warehouse_id.pricelist
-                self.write({
-                    "warehouse_id":warehouse[0],
-                    "pricelist_id": self.warehouse_id.pricelist,
-                    "facility":self.warehouse_id
-                })
+                self.facility = warehouse[0]                
+                # self.write({
+                #     "warehouse_id":warehouse[0],
+                #     "pricelist_id": self.warehouse_id.pricelist,
+                #     "facility":self.warehouse_id
+                # })
             return
 
     @api.model
@@ -126,13 +128,13 @@ class SaleOrder(models.Model):
         self.action_confirm()
         return
     
-    @api.multi
-    def write(self, vals):
-        console_log(vals)
-        # self.update_warehouse_and_location()  
-        res = super(SaleOrder, self).write(vals)
+    # @api.multi
+    # def write(self, vals):
+    #     console_log(vals)
+    #     # self.update_warehouse_and_location()  
+    #     res = super(SaleOrder, self).write(vals)
 
-        return res
+    #     return res
 
 
 SaleOrder()
