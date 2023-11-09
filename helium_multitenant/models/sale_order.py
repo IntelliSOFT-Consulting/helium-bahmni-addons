@@ -8,18 +8,10 @@ class SaleOrder(models.Model):
 
     _name = 'sale.order'
     _inherit = 'sale.order'
-
-
          
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(SaleOrder, self).fields_view_get(
-        view_id=view_id, view_type=view_type, toolbar=toolbar,submenu=submenu)
-        console_log("onLoad")
-        console_log(res)
-        console_log(self.partner_id)
-        console_log(self)
         if True:
             data = {}
             for attribute in self.partner_id.attribute_ids:
@@ -32,20 +24,31 @@ class SaleOrder(models.Model):
                     UserError("Facility information not found.")
                     return
                 self.warehouse_id = warehouse[0]
+
                 self.location_id = self.stock_location
                 self.facility = self.warehouse_id
                 self.write({'facility': self.facility})
                 self.pricelist_id = self.warehouse_id.pricelist
+        res = super(SaleOrder, self).fields_view_get(
+        view_id=view_id, view_type=view_type, toolbar=toolbar,submenu=submenu)
+        console_log("onLoad")
+        console_log(res)
+        console_log(self.partner_id)
+        console_log(self)
+        
         return res
 
     shop_id = fields.Many2one('sale.shop', string="Shop", default=lambda self: self.env['sale.shop'].search([], limit=1))
     facility = fields.Many2one('stock.warehouse', required=True)
+    facility_name = fields.Char()
     stock_location  = fields.Many2one('stock.location', string="Dispensing Location", required=True)
 
     @api.onchange('facility')
     def _onchange_facility(self):
         if self.facility:
             self.warehouse_id = self.facility
+            self.pricelist_id = self.warehouse_id.pricelist[0]
+            self.facility_name = self.warehouse_id.name
             return
 
     @api.onchange('partner_id')
@@ -59,17 +62,23 @@ class SaleOrder(models.Model):
                 warehouse = self.env['stock.warehouse'].search(
                     [("name", "=", data['facilityName'])], limit=1)
                 if not warehouse:
-                    UserError("Facility information not found.")
+                    UserError("Selected facility information not found or invalid.")
                     return
                 self.warehouse_id = warehouse[0]
-                self.location_id = self.stock_location
-                self.facility = self.warehouse_id
-                self.pricelist_id = self.warehouse_id.pricelist
+                self.facility = warehouse[0]                
+                # self.write({
+                #     "warehouse_id":warehouse[0],
+                #     "pricelist_id": self.warehouse_id.pricelist,
+                #     "facility":self.warehouse_id
+                # })
             return
 
     @api.model
     def update_warehouse_and_location(self):
         # if SaleOrder is not paid
+        if not self.facility:
+            UserError("Dispensing location is required.")
+            return
         console_log("State: {}".format(self.state))
         if self.state == "draft":
             data = {}
@@ -119,13 +128,13 @@ class SaleOrder(models.Model):
         self.action_confirm()
         return
     
-    @api.multi
-    def write(self, vals):
-        console_log(vals)
-        # self.update_warehouse_and_location()  
-        res = super(SaleOrder, self).write(vals)
+    # @api.multi
+    # def write(self, vals):
+    #     console_log(vals)
+    #     # self.update_warehouse_and_location()  
+    #     res = super(SaleOrder, self).write(vals)
 
-        return res
+    #     return res
 
 
 SaleOrder()
