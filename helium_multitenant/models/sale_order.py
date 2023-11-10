@@ -11,27 +11,6 @@ class SaleOrder(models.Model):
 
     shop_id = fields.Many2one('sale.shop', string="Shop", default=lambda self: self.env['sale.shop'].search([], limit=1))
 
-    @api.onchange('customer')
-    def _onchange_customer(self):
-        if self.customer:
-            self.surname = ""
-            self.other_names = ""
-            self.nhis_no = ""
-            data = {}
-            for attribute in self.customer.attribute_ids:
-                data[attribute.name] = attribute.value
-            console_log(data)
-            if 'facilityName' in data:
-                warehouse = self.env['stock.warehouse'].search(
-                    [("name", "=", data['facilityName'])], limit=1)
-                if not warehouse:
-                    UserError("Facility information not found.")
-                    return
-                self.warehouse_id = warehouse[0]
-                self.location_id = self.warehouse_id.lot_stock_id
-                self.pricelist_id = self.warehouse_id.pricelist
-            return
-
     @api.multi
     def update_warehouse_and_location(self):
         # if SaleOrder is not paid
