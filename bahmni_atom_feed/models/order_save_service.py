@@ -119,6 +119,9 @@ class OrderSaveService(models.Model):
                 orders = list(ordersGroup)
                 care_setting = orders[0].get('visitType').lower()
                 provider_name = orders[0].get('providerName')
+
+                # set the ccc number
+                ccc = cus_id.ccc_number
                 # will return order line data for products which exists in the system, either with productID passed
                 # or with conceptName
                 unprocessed_orders = self._filter_processed_orders(orders)
@@ -172,6 +175,7 @@ class OrderSaveService(models.Model):
                                            'state': 'draft',
                                            'shop_id': shop_id,
                                            'origin': 'ATOMFEED SYNC',
+                                           'ccc_number': ccc
                                            }
                         if shop_obj.pricelist_id:
                             sale_order_vals.update({'pricelist_id': shop_obj.pricelist_id.id})
@@ -183,7 +187,7 @@ class OrderSaveService(models.Model):
                         # Non Dispensed Update
                         # replaced update_sale_order method call
                         for order in sale_order_ids:
-                            order.write({'care_setting': care_setting, 'provider_name': provider_name})
+                            order.write({'care_setting': care_setting, 'provider_name': provider_name, 'ccc_number': ccc})
                             for rec in unprocessed_non_dispensed_order:
                                 self._process_orders(order, unprocessed_non_dispensed_order, rec)
                             # break from the outer loop
@@ -253,7 +257,8 @@ class OrderSaveService(models.Model):
                                            'picking_policy': 'direct',
                                            'state': 'draft',
                                            'shop_id': shop_id,
-                                           'origin': 'ATOMFEED SYNC'}
+                                           'origin': 'ATOMFEED SYNC',
+                                           'ccc_number': ccc}
                         if shop_obj.pricelist_id:
                             sale_order_dict.update({'pricelist_id': shop_obj.pricelist_id.id})
                         new_sale_order = self.env['sale.order'].create(sale_order_dict)
@@ -291,7 +296,8 @@ class OrderSaveService(models.Model):
                                                'picking_policy': 'direct',
                                                'state': 'draft',
                                                'shop_id': shop_id,
-                                               'origin': 'ATOMFEED SYNC'}
+                                               'origin': 'ATOMFEED SYNC',
+                                               'ccc_number': ccc}
 
                             if shop_obj.pricelist_id:
                                 sales_order_obj.update({'pricelist_id': shop_obj.pricelist_id.id})
@@ -425,7 +431,7 @@ class OrderSaveService(models.Model):
             product_uom_qty = order['quantity']
             if(prod_lot != None and order['quantity'] > prod_lot.stock_forecast):
                 product_uom_qty = prod_lot.stock_forecast
-            description = " ".join([str(prod_obj.name), "- Total", str(product_uom_qty), str(order.get('quantityUnits', None))])
+            description = " ".join([prod_obj.name, "- Total", str(product_uom_qty), str(order.get('quantityUnits', None))])
             order_line_dispensed = True if order.get('dispensed') == 'true' or (order.get('dispensed') and order.get('dispensed') != 'false') else False
             sale_order_line = {
                 'product_id': prod_id,

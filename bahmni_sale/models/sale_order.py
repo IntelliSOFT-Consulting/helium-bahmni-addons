@@ -107,6 +107,7 @@ class SaleOrder(models.Model):
     location_id = fields.Many2one('stock.location', string="Location")
     partner_uuid = fields.Char(string='Customer UUID', store=True, readonly=True, compute='_get_partner_details')
     shop_id = fields.Many2one('sale.shop', 'Shop', required=True)
+    ccc_number = fields.Char(string="CCC Number")
 
 
     @api.onchange('order_line')

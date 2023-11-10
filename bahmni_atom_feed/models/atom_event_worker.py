@@ -15,8 +15,6 @@ class AtomEventWorker(models.Model):
     @api.model
     def process_event(self, vals):
         '''Method getting triggered from Bahmni side'''
-        _logger.info("vals")
-        _logger.info(vals)
         category = vals.get("category")
 #         patient_ref = vals.get("ref")
         try:
@@ -138,6 +136,24 @@ class AtomEventWorker(models.Model):
         return self.env.user.company_id.country_id
 
     @api.model
+    def _find_phone_number(self, vals):
+        mobile = ""
+        attributes = json.loads(vals.get("attributes", "{}"))
+        for key in attributes:
+            if key == 'phoneNumber':
+                mobile = attributes[key]
+        return mobile
+
+    @api.model
+    def _find_ccc_number(self, vals):
+        ccc = ""
+        attributes = json.loads(vals.get("attributes", "{}"))
+        for key in attributes:
+            if key == 'CCC':
+                ccc = attributes[key]
+        return ccc
+
+    @api.model
     def _find_or_create_level3(self, state, district, level_name, auto_create_customer_address_levels):
         levels = self.env['district.tehsil'].search([('name', '=ilike', level_name),
                                                     ('district_id', '=', district.id if district else False)])
@@ -182,7 +198,11 @@ class AtomEventWorker(models.Model):
         res.update({'ref': vals.get('ref'),
                     'name': vals.get('name'),
                     'local_name': vals.get('local_name'),
-                    'uuid': vals.get('uuid')})
+                    'uuid': vals.get('uuid'),
+                    'birthDate': vals.get('birthDate'),
+                    'gender': vals.get('gender'),
+                    'mobile': self._find_phone_number(vals),
+                    'ccc_number': self._find_ccc_number(vals)  })
         address_data = vals.get('preferredAddress')
         # get validated address details
         address_details = self._get_address_details(json.loads(address_data))
