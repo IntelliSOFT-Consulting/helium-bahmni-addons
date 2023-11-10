@@ -9,50 +9,16 @@ class SaleOrder(models.Model):
     _name = 'sale.order'
     _inherit = 'sale.order'
 
-
-         
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(SaleOrder, self).fields_view_get(
-        view_id=view_id, view_type=view_type, toolbar=toolbar,submenu=submenu)
-        console_log("onLoad")
-        console_log(res)
-        console_log(self.partner_id)
-        console_log(self)
-        if True:
-            data = {}
-            for attribute in self.partner_id.attribute_ids:
-                data[attribute.name] = attribute.value
-            console_log(data)
-            if 'facilityName' in data:
-                warehouse = self.env['stock.warehouse'].search(
-                    [("name", "=", data['facilityName'])], limit=1)
-                if not warehouse:
-                    UserError("Facility information not found.")
-                    return
-                self.warehouse_id = warehouse[0]
-                self.location_id = self.stock_location
-                self.facility = self.warehouse_id
-                self.write({'facility': self.facility})
-                self.pricelist_id = self.warehouse_id.pricelist
-        return res
-
     shop_id = fields.Many2one('sale.shop', string="Shop", default=lambda self: self.env['sale.shop'].search([], limit=1))
-    facility = fields.Many2one('stock.warehouse', required=True)
-    stock_location  = fields.Many2one('stock.location', string="Dispensing Location", required=True)
 
-    @api.onchange('facility')
-    def _onchange_facility(self):
-        if self.facility:
-            self.warehouse_id = self.facility
-            return
-
-    @api.onchange('partner_id')
+    @api.onchange('customer')
     def _onchange_customer(self):
-        if self.partner_id:
+        if self.customer:
+            self.surname = ""
+            self.other_names = ""
+            self.nhis_no = ""
             data = {}
-            for attribute in self.partner_id.attribute_ids:
+            for attribute in self.customer.attribute_ids:
                 data[attribute.name] = attribute.value
             console_log(data)
             if 'facilityName' in data:
@@ -62,12 +28,11 @@ class SaleOrder(models.Model):
                     UserError("Facility information not found.")
                     return
                 self.warehouse_id = warehouse[0]
-                self.location_id = self.stock_location
-                self.facility = self.warehouse_id
+                self.location_id = self.warehouse_id.lot_stock_id
                 self.pricelist_id = self.warehouse_id.pricelist
             return
 
-    @api.model
+    @api.multi
     def update_warehouse_and_location(self):
         # if SaleOrder is not paid
         console_log("State: {}".format(self.state))
@@ -90,8 +55,8 @@ class SaleOrder(models.Model):
             if not warehouse:
                 UserError("Facility information not found.")
                 return
-            self.facility = warehouse[0]
-            # self.location_id = self.warehouse_id.lot_stock_id
+            self.warehouse_id = warehouse[0]
+            self.location_id = self.warehouse_id.lot_stock_id
             self.pricelist_id = self.warehouse_id.pricelist
 
 
